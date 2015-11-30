@@ -1,4 +1,4 @@
-**bottle-neck**:  *Utilities suite for developing web services with *bottle.py*
+**bottle-neck**:  Utilities suite for developing web services with *bottle.py*
 framework.
 
 
