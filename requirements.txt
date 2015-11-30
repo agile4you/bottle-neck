@@ -1,0 +1,5 @@
+bottle
+pytest
+coverage
+coveralls
+pytest-cov
