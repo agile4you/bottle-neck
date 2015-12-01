@@ -24,8 +24,8 @@ DEFAULT_ROUTES = ("get", "put", "post", "delete", "patch", "options")
 CORS_ROUTES = ("put", "post", "delete", "patch")
 
 PLUGIN_SCOPE = (
-    ('optional', 'plugins'),
-    ('global', 'global_plugins')
+    (False, 'plugins'),
+    (True, 'global_plugins')
 )
 
 
@@ -59,7 +59,7 @@ class ClassPropertyDescriptor(object):
         self.fset = fset
 
     def __get__(self, obj, cls=None):
-        if cls is None:
+        if cls is None:  # pragma: no cover
             cls = type(obj)
         return self.fget.__get__(obj, cls)()
 
@@ -97,7 +97,7 @@ def cached_classproperty(fun):
             return cls.__cache[fun]
         except AttributeError:
             cls.__cache = {}
-        except KeyError:
+        except KeyError:  # pragma: no cover
             pass
         ret = cls.__cache[fun] = fun(cls)
         return ret
@@ -173,7 +173,7 @@ def route_method(method_name, extra_part=False):
 class BasePlugin(object):
     """
     """
-    def __init__(self, callable_object, *args, **kwargs):
+    def __init__(self, callable_object, *args, **kwargs):  # pragma: no cover
         self._wrapped = callable_object
         self._args = args
         self._kwargs = kwargs
@@ -184,7 +184,7 @@ class BasePlugin(object):
         cls_name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', cls_name).lower()
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):  # pragma: no cover
         raise NotImplementedError("Must Override `__call__` method")
 
 
@@ -236,23 +236,23 @@ class BaseHandler(object):
     global_plugins = dict()
 
     @classmethod
-    def add_plugin(cls, plugin_callables, scope='private'):
+    def add_plugin(cls, plugin_callables, global_scope=False):
         """Register a new plugin in handler.
 
         Args:
             plugin_callables (list): A list of plugin callables.
-            scope (str): The scope of the plugin (optional, global).
+            global_scope (bool): Indicates The scope of the plugin.
 
         Returns:
             Class instance.
         """
-        repo = getattr(cls, dict(PLUGIN_SCOPE)[scope])
+        repo = getattr(cls, dict(PLUGIN_SCOPE)[global_scope])
 
         for plugin_callable in plugin_callables:
 
             if hasattr(plugin_callable, 'func_name'):
                 repo[plugin_callable.func_name] = plugin_callable
-            else:
+            else:  # pragma: no cover
                 repo[plugin_callable.im_func.func_name] = plugin_callable
 
         return cls
@@ -352,6 +352,6 @@ class BaseHandler(object):
             hasattr(member[1], 'http_method')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import doctest
     doctest.testmod()

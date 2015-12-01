@@ -34,6 +34,12 @@ HTTP_CODES = (
 )
 
 
+class WSResponseException(Exception):
+    """Base module exception
+    """
+    pass
+
+
 class WSResponse(object):
     """Base web service response class.
 
@@ -71,19 +77,21 @@ class WSResponse(object):
     __slots__ = ['status_code', 'data', 'errors']
 
     def __init__(self, status_code=200, data=None, errors=None):
-        assert status_code in dict(HTTP_CODES) and\
-            isinstance(errors, (list, NoneType)),\
-            'Invalid initialization.'
+        if status_code not in dict(HTTP_CODES) or\
+                not isinstance(errors, (list, NoneType)):
+            raise WSResponseException(
+                'Invalid Response initialization.'
+            )
         self.status_code = status_code
         self.data = data
         self.errors = errors
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "WebService Response: status={}, data={}".format(
             self.status_code, str(self.data)
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # pragma: no cover
         assert isinstance(other, WSResponse), 'Invalid Type for eq operator.'
         return self.status_code == other.status_code and \
             self.data == self.data
@@ -226,6 +234,6 @@ class WSResponse(object):
                      'errors': self.errors or []})
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import doctest
     doctest.testmod()
