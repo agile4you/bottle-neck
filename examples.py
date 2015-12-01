@@ -5,9 +5,19 @@
 import bottle
 from bottle_neck.handlers import BaseHandler, route_method, plugin_method
 from bottle_neck.routing import Router
+from bottle_neck.handlers import BasePlugin
 
 
 app = bottle.Bottle()
+
+
+class LogPlugin(BasePlugin):
+    """Testing base plugin.
+    """
+
+    def __call__(self, *args, **kwargs):
+        print "Log: (calling a plugin wrapped handler)"
+        return self._wrapped(*args, **kwargs)
 
 
 def print_plugin(handler):
@@ -85,7 +95,7 @@ ModelHandler.add_plugin(
 
 ModelHandler.add_plugin(
     scope='global',
-    plugin_callables=[print_plugin]
+    plugin_callables=[LogPlugin]
 )
 
 print dir(ModelHandler.version)

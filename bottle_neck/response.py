@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Unified Web Service Response Interface for JSON views.
-.
+
 Provides some base classes that implement a strict skeleton for
 API response using all HTTP method available. The concept is to
 have a unified response object for any web-service that is
@@ -10,10 +10,6 @@ framework-agnostic.
 .. note::
     In beta version only JSON renderer is supported. Must implement
     additional renderer classes (SOAP, XML, YAML).
-
-
-Module documentation
-++++++++++++++++++++
 """
 
 from types import NoneType
@@ -39,7 +35,7 @@ HTTP_CODES = (
 
 
 class WSResponse(object):
-    """**Base web service response class.**
+    """Base web service response class.
 
     WSResponse class provides a unified API for HTTP responses.
 
@@ -57,23 +53,19 @@ class WSResponse(object):
 
         }
 
-
     Attributes:
-        - **status_code** (int)    - Response HTTP status code.
-        - **status_txt** (str)     - Response HTTP status message.
-        - **response_data** (dict) - Response key/value data.
-        - **errors** (dict)        - Response key/value errors.
-        - **to_json**  (str)       - Valid JSON encoded response property.
+        status_code (int): Response HTTP status code.
+        data (dict): Response key/value data.
+        errors (dict): Response key/value errors.
 
-Example usage::
-
-    >>> response = WSResponse(
-    ...                 status_code=200,
-    ...                 data='Hi'
-    ...             )
-    ...
-    >>> print response.to_json
-    {'status_code': 200, 'status_text': 'OK', 'data': 'Hi', 'errors': []}
+    Examples:
+        >>> response = WSResponse(
+        ...                 status_code=200,
+        ...                 data='Hi'
+        ...             )
+        ...
+        >>> print response.to_json
+        {'status_code': 200, 'status_text': 'OK', 'data': 'Hi', 'errors': []}
 
     """
     __slots__ = ['status_code', 'data', 'errors']
@@ -100,12 +92,13 @@ Example usage::
 
     @classmethod
     def ok(cls, data):
-        """Shortcut API for HTTP 200 ``OK`` response.
+        """Shortcut API for HTTP 200 `OK` response.
 
-        Params:
-            - **data** (dict): *Response key/value data.*
+        Args:
+            data (dict): Response key/value data.
 
-        :return: WSResponse Instance.
+        Returns
+            WSResponse Instance.
         """
         return cls(
             status_code=200,
@@ -114,73 +107,109 @@ Example usage::
 
     @classmethod
     def created(cls, data=None):
-        """Shortcut API for HTTP 201 ``Created`` response.
+        """Shortcut API for HTTP 201 `Created` response.
 
-        :return: WSResponse Instance.
+        Args:
+            data (dict): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(201, data=data).to_json
 
     @classmethod
     def not_modified(cls, errors=None):
-        """Shortcut API for HTTP 304 ``Not Modified`` response.
+        """Shortcut API for HTTP 304 `Not Modified` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(304, None, errors).to_json
 
     @classmethod
     def bad_request(cls, errors=None):
-        """Shortcut API for HTTP 400 ``Bad request`` response.
+        """Shortcut API for HTTP 400 `Bad request` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(400, errors=errors).to_json
 
     @classmethod
     def unauthorized(cls, errors=None):
-        """Shortcut API for HTTP 401 ``Unauthorized`` response.
+        """Shortcut API for HTTP 401 `Unauthorized` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(401, errors=errors).to_json
 
     @classmethod
     def forbidden(cls, errors=None):
-        """Shortcut API for HTTP 403 ``Forbidden`` response.
+        """Shortcut API for HTTP 403 `Forbidden` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(403, errors=errors).to_json
 
     @classmethod
     def not_found(cls, errors=None):
-        """Shortcut API for HTTP 404 ``Not found`` response.
+        """Shortcut API for HTTP 404 `Not found` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(404, None, errors).to_json
 
     @classmethod
     def method_not_allowed(cls, errors=None):
-        """Shortcut API for HTTP 405 ``Method not allowed`` response.
+        """Shortcut API for HTTP 405 `Method not allowed` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(405, None, errors).to_json
 
     @classmethod
     def not_implemented(cls, errors=None):
-        """Shortcut API for HTTP 501 ``Not Implemented`` response.
+        """Shortcut API for HTTP 501 `Not Implemented` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(501, None, errors).to_json
 
     @classmethod
     def service_unavailable(cls, errors=None):
-        """Shortcut API for HTTP 503 ``Service Unavailable`` response.
+        """Shortcut API for HTTP 503 `Service Unavailable` response.
 
-        :return: WSResponse Instance.
+        Args:
+            errors (list): Response key/value data.
+
+        Returns:
+            WSResponse Instance.
         """
         return cls(503, None, errors).to_json
 
@@ -188,7 +217,8 @@ Example usage::
     def to_json(self):
         """Short cut for JSON response service data.
 
-        :return: JSON valid string.
+        Returns:
+            Dict that implements JSON interface.
         """
         return dict({'status_code': self.status_code,
                      'status_text': dict(HTTP_CODES).get(self.status_code),

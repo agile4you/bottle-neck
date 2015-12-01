@@ -8,11 +8,15 @@ application instances with application routing mechanism.
 __author__ = "Papavassileiou Vassilis"
 __date__ = "2015-11-29"
 __version__ = "0.1"
-__all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method']
+__all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method',
+           'HandlerError', 'HandlerHTTPMethodError', 'HandlerPluginError',
+           'BasePlugin']
 
 
+import functools
 import inspect
 import six
+import re
 
 
 DEFAULT_ROUTES = ("get", "put", "post", "delete", "patch", "options")
@@ -31,7 +35,7 @@ class HandlerError(Exception):
     pass
 
 
-class InvalidHTTPMethodError(HandlerError):
+class HandlerHTTPMethodError(HandlerError):
     """Raises for invalid HTTP method declaration.
     """
     pass
@@ -41,6 +45,63 @@ class HandlerPluginError(HandlerError):
     """Raises when a handler plugin error occurs.
     """
     pass
+
+
+class ClassPropertyDescriptor(object):
+    """ClassProperty Descriptor class.
+
+    Straight up stolen from stack overflow Implements class level property
+    non-data descriptor.
+    """
+
+    def __init__(self, fget, fset=None):
+        self.fget = fget
+        self.fset = fset
+
+    def __get__(self, obj, cls=None):
+        if cls is None:
+            cls = type(obj)
+        return self.fget.__get__(obj, cls)()
+
+
+def classproperty(func):
+    """classproperty decorator.
+    Using this decorator a class can have a property. Necessary for properties
+    that don't need instance initialization. Works exactly the same as a
+    normal property.
+
+    Examples:
+        >>> class MyClass(object):
+        ...     @classproperty
+        ...     def my_prop(self):
+        ...         return self.__name__ + ' class'
+        ...
+        >>> MyClass.my_prop
+        'MyClass class'
+    """
+    if not isinstance(func, (classmethod, staticmethod)):
+        func = classmethod(func)
+    return ClassPropertyDescriptor(func)
+
+
+def cached_classproperty(fun):
+    """A memorization decorator for class  properties.
+
+    It implements the above `classproperty` decorator, with
+    the difference that the function result is computed and attached
+    to class as direct attribute. (Lazy loading and caching.)
+    """
+    @functools.wraps(fun)
+    def get(cls):
+        try:
+            return cls.__cache[fun]
+        except AttributeError:
+            cls.__cache = {}
+        except KeyError:
+            pass
+        ret = cls.__cache[fun] = fun(cls)
+        return ret
+    return classproperty(get)
 
 
 def plugin_method(*plugin_names):
@@ -96,7 +157,7 @@ def route_method(method_name, extra_part=False):
     """
     def wrapper(callable_obj):
         if method_name.lower() not in DEFAULT_ROUTES:
-            raise InvalidHTTPMethodError(
+            raise HandlerHTTPMethodError(
                 'Invalid http method in method: {}'.format(method_name)
             )
 
@@ -107,6 +168,24 @@ def route_method(method_name, extra_part=False):
 
         return classmethod(callable_obj)
     return wrapper
+
+
+class BasePlugin(object):
+    """
+    """
+    def __init__(self, callable_object, *args, **kwargs):
+        self._wrapped = callable_object
+        self._args = args
+        self._kwargs = kwargs
+        self.__doc__ = callable_object.__doc__
+
+    @cached_classproperty
+    def func_name(cls):
+        cls_name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', cls_name).lower()
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError("Must Override `__call__` method")
 
 
 class HandlerMeta(type):
@@ -144,12 +223,11 @@ class BaseHandler(object):
     Subclass `BaseHandler` in order to its API for application routing, and
     implement any of the known http method:
 
-    Attributes:
-
-        - base_endpoint (str): The handler endpoint prefix.
-        - cors_enabled (bool): Indicates if CORS is enabled.
-        - plugins (dict): A key/value mapping of available plugins.
-        - global_plugins (dict): A key/value mapping default applying plugins.
+    class Attrs:
+        base_endpoint (str): The handler endpoint prefix.
+        cors_enabled (bool): Indicates if CORS is enabled.
+        plugins (dict): A key/value mapping of available plugins.
+        global_plugins (dict): A key/value mapping default applying plugins.
     """
 
     base_endpoint = '/'
@@ -160,6 +238,13 @@ class BaseHandler(object):
     @classmethod
     def add_plugin(cls, plugin_callables, scope='private'):
         """Register a new plugin in handler.
+
+        Args:
+            plugin_callables (list): A list of plugin callables.
+            scope (str): The scope of the plugin (optional, global).
+
+        Returns:
+            Class instance.
         """
         repo = getattr(cls, dict(PLUGIN_SCOPE)[scope])
 
@@ -170,13 +255,21 @@ class BaseHandler(object):
             else:
                 repo[plugin_callable.im_func.func_name] = plugin_callable
 
+        return cls
+
     @classmethod
     def register_app(cls, application):
         """Register class view in bottle application.
+
+        Args:
+            application (instance): A bottle.Bottle() instance.
+
+        Returns:
+            Class instance.
         """
 
-        assert cls is not BaseHandler,\
-            "Cant register a `BaseHandler` class instance"
+        if cls is BaseHandler:
+            raise HandlerError("Cant register a `BaseHandler` class instance")
 
         routes = cls._get_http_members()
 
@@ -213,8 +306,9 @@ class BaseHandler(object):
             )(func_callable)
 
         if cls.cors_enabled:
+            cls_desc = cls.__doc__ or ''
             options_data = {
-                "handler": {"name": cls.__name__, "desc": cls.__doc__.strip()},
+                "handler": {"name": cls.__name__, "desc": cls_desc.strip()},
                 "http_methods": [r[0] for r in routes]
             }
 
@@ -227,6 +321,8 @@ class BaseHandler(object):
                 "{}/<url:re:.+>".format(cls.base_endpoint).replace("//", "/"),
                 method=["OPTIONS"]
             )(lambda url: options_data)
+
+        return cls
 
     @classmethod
     def _build_routes(cls, method_args, url_extra_part=None):
