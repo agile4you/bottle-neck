@@ -63,8 +63,12 @@ ModelHandler.add_plugin(
 )
 
 
+def handler():
+    return 'Hello world!'
+
+
 router = Router()
-router.register_handler(lambda: "Hello", entrypoint='/')
+router.register_handler(handler, entrypoint='/')
 router.register_handler(ModelHandler, entrypoint='/api')
 
 router.mount(app)

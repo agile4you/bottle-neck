@@ -1,6 +1,9 @@
 .. image:: https://travis-ci.org/agile4you/bottle-neck.svg?branch=master
     :target: https://travis-ci.org/agile4you/bottle-neck
 
+.. image:: https://coveralls.io/repos/agile4you/bottle-neck/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/agile4you/bottle-neck?branch=master
+
 **bottle-neck**:  Utilities suite for developing web services with *bottle.py*
 framework.
 
