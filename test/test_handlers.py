@@ -145,4 +145,4 @@ def test_handler_register_class_pass(mock_app, mock_handler):
 
     mock_handler.register_app(mock_app)
 
-    assert all([ '/mock' in i.rule for i in mock_app.routes])
+    assert all(['/mock' in i.rule for i in mock_app.routes])
