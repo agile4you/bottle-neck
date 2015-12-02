@@ -289,7 +289,7 @@ class BaseHandler(object):
             applied_plugins = [pl for pl in cls.plugins
                                if hasattr(func_callable, pl)]
 
-            for plugin in applied_plugins:
+            for plugin in applied_plugins:  # pragma: no cover
                 try:
                     func_callable = cls.plugins[plugin](func_callable)
                 except TypeError, error:

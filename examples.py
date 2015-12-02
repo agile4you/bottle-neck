@@ -35,8 +35,6 @@ class ModelHandler(BaseHandler):
     """
     base_endpoint = '/api'
     cors_enabled = True
-    # global_plugins = {"log_plugin": LogPlugin}
-    # plugins = {"pk_plugin": KeyPlugin}
 
     @plugin_method('key_plugin')
     def get(self, pk):
@@ -54,20 +52,20 @@ class ModelHandler(BaseHandler):
 
 
 ModelHandler.add_plugin(
-    scope='global',
+    global_scope=True,
     plugin_callables=[LogPlugin]
 )
 
 
 ModelHandler.add_plugin(
-    scope='optional',
+    global_scope=False,
     plugin_callables=[KeyPlugin]
 )
 
 
 router = Router()
-
-router.add_handler(ModelHandler, entrypoint='/api')
+router.register_handler(lambda: "Hello", entrypoint='/')
+router.register_handler(ModelHandler, entrypoint='/api')
 
 router.mount(app)
 

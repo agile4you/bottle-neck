@@ -6,15 +6,7 @@ __author__ = 'Papavassiliou Vassilis'
 
 
 import pytest
-import bottle
 import bottle_neck.handlers as handler
-
-
-@pytest.fixture(scope="module")
-def mock_app():
-    """pytest fixture for `bottle.Bottle` instance.
-    """
-    return bottle.Bottle()
 
 
 @pytest.fixture(scope="module")
