@@ -7,11 +7,11 @@ from bottle_neck.handlers import BaseHandler, route_method, plugin_method
 from bottle_neck.routing import Router
 from bottle_neck.handlers import BaseHandlerPlugin
 from bottle_neck.response import WSResponse
-from bottle_neck.plugins import ErrorWrapPlugin
+from bottle_neck.plugins import WrapErrorPlugin
 
 
 app = bottle.Bottle()
-app.install(ErrorWrapPlugin('error_wrapper', WSResponse))
+app.install(WrapErrorPlugin('error_wrapper', WSResponse))
 
 
 class LogPlugin(BaseHandlerPlugin):

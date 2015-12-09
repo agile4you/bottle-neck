@@ -8,7 +8,7 @@ Provides some base functionality for creating application-scope plugins for
 __author__ = 'pav'
 __date__ = '2015-12-9'
 __version__ = '0.1'
-__all__ = ['BasePlugin', 'ErrorWrapPlugin']
+__all__ = ['BasePlugin', 'WrapErrorPlugin']
 
 
 import abc
@@ -44,7 +44,7 @@ class BasePlugin(object):
         pass
 
 
-class ErrorWrapPlugin(BasePlugin):
+class WrapErrorPlugin(BasePlugin):
     """Middleware class that catches `bottle.HTTPError` exceptions and returns
     default HTTP status code 200 using `bottle_neck.response.WSResponse` class
     for error wrapping.
