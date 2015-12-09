@@ -10,7 +10,7 @@ __date__ = "2015-11-29"
 __version__ = "0.1"
 __all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method',
            'HandlerError', 'HandlerHTTPMethodError', 'HandlerPluginError',
-           'BasePlugin']
+           'BaseHandlerPlugin']
 
 
 import functools
@@ -170,7 +170,7 @@ def route_method(method_name, extra_part=False):
     return wrapper
 
 
-class BasePlugin(object):
+class BaseHandlerPlugin(object):
     """
     """
     def __init__(self, callable_object, *args, **kwargs):  # pragma: no cover
@@ -184,8 +184,11 @@ class BasePlugin(object):
         cls_name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', cls_name).lower()
 
+    def apply(self, *args, **kwargs):  # pragma: no cover
+        raise NotImplementedError("Must Override `apply` method")
+
     def __call__(self, *args, **kwargs):  # pragma: no cover
-        raise NotImplementedError("Must Override `__call__` method")
+        return self.apply(*args, **kwargs)
 
 
 class HandlerMeta(type):

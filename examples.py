@@ -5,28 +5,31 @@
 import bottle
 from bottle_neck.handlers import BaseHandler, route_method, plugin_method
 from bottle_neck.routing import Router
-from bottle_neck.handlers import BasePlugin
+from bottle_neck.handlers import BaseHandlerPlugin
+from bottle_neck.response import WSResponse
+from bottle_neck.plugins import ErrorWrapPlugin
 
 
 app = bottle.Bottle()
+app.install(ErrorWrapPlugin('error_wrapper', WSResponse))
 
 
-class LogPlugin(BasePlugin):
+class LogPlugin(BaseHandlerPlugin):
     """Testing base plugin.
     """
 
-    def __call__(self, *args, **kwargs):
+    def apply(self, *args, **kwargs):
         print "Log: (calling a plugin wrapped handler)"
         return self._wrapped(*args, **kwargs)
 
 
-class KeyPlugin(BasePlugin):
+class KeyPlugin(BaseHandlerPlugin):
     """Testing optional plugins
     """
 
-    def __call__(self, *args, **kwargs):
+    def apply(self, *args, **kwargs):
         if int(kwargs['pk']) < 0:
-            return {"error": "Primary Key must be positive!"}
+            bottle.abort(400, "Primary Key must be positive!")
         return self._wrapped(*args, **kwargs)
 
 

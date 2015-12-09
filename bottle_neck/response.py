@@ -70,7 +70,7 @@ class WSResponse(object):
         ...                 data='Hi'
         ...             )
         ...
-        >>> print response.to_json
+        >>> response.to_json
         {'status_code': 200, 'status_text': 'OK', 'data': 'Hi', 'errors': []}
 
     """
@@ -78,12 +78,16 @@ class WSResponse(object):
 
     def __init__(self, status_code=200, data=None, errors=None):
         if status_code not in dict(HTTP_CODES) or\
-                not isinstance(errors, (list, NoneType)):
+                not isinstance(errors, (list, NoneType, str)):
             raise WSResponseException(
                 'Invalid Response initialization.'
             )
         self.status_code = status_code
         self.data = data
+
+        if isinstance(errors, (str, unicode)):
+            errors = [errors]
+
         self.errors = errors
 
     def __repr__(self):  # pragma: no cover
@@ -97,6 +101,30 @@ class WSResponse(object):
             self.data == self.data
 
     __str__ = __repr__
+
+    @classmethod
+    def from_status(cls, status_line, msg=None):
+        """Returns a class method from bottle.HTTPError.status_line attribute.
+        Useful for patching `bottle.HTTPError` for web services.
+
+        Args:
+            status_line (str):  bottle.HTTPError.status_line text.
+            msg: The message data for response.
+
+        Returns:
+            Class method based on status_line arg.
+
+        Examples:
+            >>> status_line = '401 Unauthorized'
+            >>> error_msg = 'Get out!'
+            >>> resp = WSResponse.from_status(status_line, error_msg)
+            >>> resp['errors']
+            ['Get out!']
+            >>> resp['status_text']
+            'Unauthorized'
+        """
+        method = getattr(cls, status_line.lower()[4:].replace(' ', '_'))
+        return method(msg)
 
     @classmethod
     def ok(cls, data):

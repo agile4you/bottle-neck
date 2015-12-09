@@ -36,7 +36,7 @@ def mock_plugin():
     """Pytest fixture for `bottle_neck.handlers.BasePlugin` subclass.
     """
 
-    class MockPlugin(handler.BasePlugin):
+    class MockPlugin(handler.BaseHandlerPlugin):
 
         def __call__(self, *args, **kwargs):
             try:

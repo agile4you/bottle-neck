@@ -121,7 +121,8 @@ class Router(object):
         raise RouteError(  # pragma: no cover
             "Missing params: methods: {} - entrypoint: {}".format(
                 methods, entrypoint
-        ))
+            )
+        )
 
     def mount(self, app=None):
         """Mounts all registered routes to a bottle.py application instance.
