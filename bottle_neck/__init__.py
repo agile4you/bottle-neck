@@ -21,23 +21,26 @@ Provides useful utilities for creating web-services with bottle.py
 micro-framework.
 """
 
+from __future__ import absolute_import
+
 __author__ = 'Papavassiliou Vassilis'
-__date__ = '2015-11-28'
-__version__ = '0.0.1'
+__date__ = '2016-1-26'
+__version__ = '1.1'
 
 __all__ = ['BaseHandler', 'BaseHandlerPlugin', 'route_method', 'plugin_method',
            'HandlerError', 'HandlerPluginError', 'HandlerHTTPMethodError',
-           'WSResponse', 'WSResponseException', 'Router', 'Route',
+           'WSResponse', 'WSResponseError', 'Router', 'Route',
            'RouteError', 'BasePlugin', 'WrapErrorPlugin', 'BaseMiddleware',
-           'StripPathMiddleware', 'cors_enable_hook', 'strip_path_hook']
+           'StripPathMiddleware', 'cors_enable_hook', 'strip_path_hook',
+           'paginator']
 
 
-from handlers import (
+from bottle_neck.cbv import (
     BaseHandler, BaseHandlerPlugin, route_method, plugin_method, HandlerError,
     HandlerPluginError, HandlerHTTPMethodError
 )
-from response import (WSResponse, WSResponseException)
-from routing import (RouteError, Router, Route)
-from plugins import (BasePlugin, WrapErrorPlugin)
-from middleware import (BaseMiddleware, StripPathMiddleware)
-from webapi import (cors_enable_hook, strip_path_hook)
+from bottle_neck.response import (WSResponse, WSResponseError)
+from bottle_neck.routing import (RouteError, Router, Route)
+from bottle_neck.plugins import (BasePlugin, WrapErrorPlugin)
+from bottle_neck.middleware import (BaseMiddleware, StripPathMiddleware)
+from bottle_neck.webapi import (cors_enable_hook, strip_path_hook, paginator)

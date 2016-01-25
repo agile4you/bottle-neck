@@ -6,7 +6,7 @@ __author__ = 'Papavassiliou Vassilis'
 
 
 import pytest
-import bottle_neck.handlers as handler
+import bottle_neck.cbv as handler
 
 
 @pytest.fixture(scope="module")
@@ -38,7 +38,7 @@ def mock_plugin():
 
     class MockPlugin(handler.BaseHandlerPlugin):
 
-        def __call__(self, *args, **kwargs):
+        def apply(self, *args, **kwargs):
             try:
                 kwargs['pk'] = int(kwargs['pk'])
             except ValueError:

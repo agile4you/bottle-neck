@@ -3,9 +3,9 @@
 """
 
 import bottle
-from bottle_neck.handlers import BaseHandler, route_method, plugin_method
+from bottle_neck.cbv import BaseHandler, route_method, plugin_method
 from bottle_neck.routing import Router
-from bottle_neck.handlers import BaseHandlerPlugin
+from bottle_neck.cbv import BaseHandlerPlugin
 from bottle_neck.response import WSResponse
 from bottle_neck.plugins import WrapErrorPlugin
 

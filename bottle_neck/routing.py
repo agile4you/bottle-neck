@@ -5,6 +5,8 @@ Provides a basic routing mechanism for 'bottle.py' web services, with a simple
 and unique interface for function-based / Class-based handlers.
 """
 
+from __future__ import absolute_import
+
 __author__ = 'pav'
 __date__ = '18-04-2015'
 __version__ = '0.0.1'
@@ -12,7 +14,7 @@ __version__ = '0.0.1'
 __all__ = ['Router', 'RouteError']
 
 
-from handlers import HandlerMeta
+from bottle_neck.cbv import HandlerMeta
 import types
 
 

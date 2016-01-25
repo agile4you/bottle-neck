@@ -5,6 +5,8 @@ Provides some base functionality for creating application-scope plugins for
 `bottle.py`.
 """
 
+from __future__ import absolute_import
+
 __author__ = 'pav'
 __date__ = '2015-12-9'
 __version__ = '0.1'
@@ -27,7 +29,7 @@ class BasePlugin(object):
 
     api = 2
 
-    def setup(self, app):
+    def setup(self, app):  # pragma: no cover
         """Make sure that other installed plugins don't affect the same
         keyword argument and check if metadata is available.
         """
@@ -40,7 +42,7 @@ class BasePlugin(object):
                 )
 
     @abc.abstractmethod
-    def apply(self, callback, context):
+    def apply(self, callback, context):  # pragma: no cover
         pass
 
 
@@ -50,21 +52,21 @@ class WrapErrorPlugin(BasePlugin):
     for error wrapping.
     """
 
-    def __init__(self, keyword, error_wrapper_cls):
+    def __init__(self, keyword, error_wrapper_cls):  # pragma: no cover
         self.error_wrapper = error_wrapper_cls
         self.keyword = keyword
 
-    def apply(self, callback, context):
+    def apply(self, callback, context):  # pragma: no cover
         """Apply the HTTPError wrapper to the callback.
         """
 
         def wrapper(*args, **kwargs):
             try:
                 return callback(*args, **kwargs)
-            except bottle.HTTPError, e:
+            except bottle.HTTPError as error:
                 return self.error_wrapper.from_status(
-                    status_line=e.status_line,
-                    msg=e.body
+                    status_line=error.status_line,
+                    msg=error.body
                 )
 
         return wrapper

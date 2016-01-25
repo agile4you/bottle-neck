@@ -16,7 +16,7 @@ def test_ws_response_init_pass():
 def test_ws_response_init_fail():
     """Test `bottle_neck.response.WSResponse` init pass.
     """
-    with pytest.raises(response.WSResponseException):
+    with pytest.raises(response.WSResponseError):
         assert response.WSResponse(209, 1)
 
 

@@ -5,6 +5,9 @@ Provides a basic interface for applying a middleware to 'bottle.py' apps or web
 services.
 """
 
+from __future__ import absolute_import
+
+
 __author__ = 'pav'
 __date__ = '18-04-2015'
 __version__ = '0.0.1'

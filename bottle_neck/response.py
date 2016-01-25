@@ -12,12 +12,14 @@ framework-agnostic.
     additional renderer classes (SOAP, XML, YAML).
 """
 
-from types import NoneType
+from __future__ import absolute_import
+import collections
+import six
 
 
 __version__ = '0.0.1'
-__author__ = 'Papavassileiou Vassilis'
-__all__ = ['WSResponse']
+__author__ = 'Papavassiliou Vassilis'
+__all__ = ['WSResponse', 'WSResponseError']
 
 
 HTTP_CODES = (
@@ -34,7 +36,7 @@ HTTP_CODES = (
 )
 
 
-class WSResponseException(Exception):
+class WSResponseError(Exception):
     """Base module exception
     """
     pass
@@ -71,21 +73,19 @@ class WSResponse(object):
         ...             )
         ...
         >>> response.to_json
-        {'status_code': 200, 'status_text': 'OK', 'data': 'Hi', 'errors': []}
+        OrderedDict([('status_code', 200), ('status_text', 'OK'), ('data', 'Hi'), ('errors', [])])
 
     """
     __slots__ = ['status_code', 'data', 'errors']
 
     def __init__(self, status_code=200, data=None, errors=None):
         if status_code not in dict(HTTP_CODES) or\
-                not isinstance(errors, (list, NoneType, str)):
-            raise WSResponseException(
-                'Invalid Response initialization.'
-            )
+                not isinstance(errors, (list, type(None), six.string_types)):
+            raise WSResponseError('Invalid Response initialization.')
         self.status_code = status_code
         self.data = data
 
-        if isinstance(errors, (str, unicode)):
+        if isinstance(errors, (six.string_types, )):
             errors = [errors]
 
         self.errors = errors
@@ -256,10 +256,15 @@ class WSResponse(object):
         Returns:
             Dict that implements JSON interface.
         """
-        return dict({'status_code': self.status_code,
-                     'status_text': dict(HTTP_CODES).get(self.status_code),
-                     'data': self.data or {},
-                     'errors': self.errors or []})
+
+        web_resp = collections.OrderedDict()
+
+        web_resp['status_code'] = self.status_code
+        web_resp['status_text'] = dict(HTTP_CODES).get(self.status_code)
+        web_resp['data'] = self.data or {}
+        web_resp['errors'] = self.errors or []
+
+        return web_resp
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -5,7 +5,7 @@
 
 import pytest
 import bottle_neck.routing as routing
-import bottle_neck.handlers as handler
+import bottle_neck.cbv as handler
 
 
 @pytest.fixture(scope='module')

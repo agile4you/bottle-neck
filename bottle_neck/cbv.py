@@ -5,7 +5,9 @@ Provides a base class for creating class-based web handlers for bottle.py
 application instances with application routing mechanism.
 """
 
-__author__ = "Papavassileiou Vassilis"
+from __future__ import absolute_import
+
+__author__ = "Papavassiliou Vassilis"
 __date__ = "2015-11-29"
 __version__ = "0.1"
 __all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method',
@@ -180,8 +182,8 @@ class BaseHandlerPlugin(object):
         self.__doc__ = callable_object.__doc__
 
     @cached_classproperty
-    def func_name(cls):
-        cls_name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+    def func_name(self):
+        cls_name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', self.__name__)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', cls_name).lower()
 
     def apply(self, *args, **kwargs):  # pragma: no cover
@@ -226,7 +228,7 @@ class BaseHandler(object):
     Subclass `BaseHandler` in order to its API for application routing, and
     implement any of the known http method:
 
-    class Attrs:
+    Class attributes:
         base_endpoint (str): The handler endpoint prefix.
         cors_enabled (bool): Indicates if CORS is enabled.
         plugins (dict): A key/value mapping of available plugins.
@@ -256,7 +258,7 @@ class BaseHandler(object):
             if hasattr(plugin_callable, 'func_name'):
                 repo[plugin_callable.func_name] = plugin_callable
             else:  # pragma: no cover
-                repo[plugin_callable.im_func.func_name] = plugin_callable
+                repo[plugin_callable.__name__] = plugin_callable
 
         return cls
 
@@ -295,7 +297,7 @@ class BaseHandler(object):
             for plugin in applied_plugins:  # pragma: no cover
                 try:
                     func_callable = cls.plugins[plugin](func_callable)
-                except TypeError, error:
+                except TypeError as error:
                     raise HandlerPluginError(error.args)
 
             for global_plugin in cls.global_plugins:
