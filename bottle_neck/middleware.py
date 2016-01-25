@@ -10,9 +10,12 @@ from __future__ import absolute_import
 
 __author__ = 'pav'
 __date__ = '18-04-2015'
-__version__ = '0.0.1'
-
 __all__ = ['BaseMiddleware', 'StripPathMiddleware']
+
+
+from bottle_neck import __version__
+
+version = tuple(map(int, __version__.split('.')))
 
 
 class BaseMiddleware(object):

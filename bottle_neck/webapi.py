@@ -8,12 +8,14 @@ from __future__ import absolute_import
 
 __author__ = 'pav'
 __date__ = '2015-2-3'
-__version__ = '0.1'
 __all__ = ['cors_enable_hook', 'strip_path_hook', 'paginator']
 
+from bottle_neck import __version__
 from collections import OrderedDict
 import bottle
 import math
+
+version = tuple(map(int, __version__.split('.')))
 
 
 def cors_enable_hook():

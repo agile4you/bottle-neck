@@ -13,14 +13,16 @@ framework-agnostic.
 """
 
 from __future__ import absolute_import
+
+from bottle_neck import __version__
 import collections
 import six
 
-
-__version__ = '0.0.1'
 __author__ = 'Papavassiliou Vassilis'
 __all__ = ['WSResponse', 'WSResponseError']
 
+
+version = tuple(map(int, __version__.split('.')))
 
 HTTP_CODES = (
     (200, 'OK'),

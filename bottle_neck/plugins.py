@@ -9,13 +9,15 @@ from __future__ import absolute_import
 
 __author__ = 'pav'
 __date__ = '2015-12-9'
-__version__ = '0.1'
 __all__ = ['BasePlugin', 'WrapErrorPlugin']
 
 
 import abc
 import bottle
+from bottle_neck import __version__
 import six
+
+version = tuple(map(int, __version__.split('.')))
 
 
 @six.add_metaclass(abc.ABCMeta)

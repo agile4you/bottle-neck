@@ -32,7 +32,7 @@ __all__ = ['BaseHandler', 'BaseHandlerPlugin', 'route_method', 'plugin_method',
            'WSResponse', 'WSResponseError', 'Router', 'Route',
            'RouteError', 'BasePlugin', 'WrapErrorPlugin', 'BaseMiddleware',
            'StripPathMiddleware', 'cors_enable_hook', 'strip_path_hook',
-           'paginator']
+           'paginator', 'version']
 
 
 from bottle_neck.cbv import (
@@ -44,3 +44,6 @@ from bottle_neck.routing import (RouteError, Router, Route)
 from bottle_neck.plugins import (BasePlugin, WrapErrorPlugin)
 from bottle_neck.middleware import (BaseMiddleware, StripPathMiddleware)
 from bottle_neck.webapi import (cors_enable_hook, strip_path_hook, paginator)
+
+
+version = tuple(map(int, __version__.split('.')))

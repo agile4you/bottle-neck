@@ -9,17 +9,19 @@ from __future__ import absolute_import
 
 __author__ = "Papavassiliou Vassilis"
 __date__ = "2015-11-29"
-__version__ = "0.1"
 __all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method',
            'HandlerError', 'HandlerHTTPMethodError', 'HandlerPluginError',
            'BaseHandlerPlugin']
 
 
+from bottle_neck import __version__
 import functools
 import inspect
 import six
 import re
 
+
+version = tuple(map(int, __version__.split('.')))
 
 DEFAULT_ROUTES = ("get", "put", "post", "delete", "patch", "options")
 
