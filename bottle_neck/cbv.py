@@ -15,6 +15,7 @@ __all__ = ['BaseHandler', 'HandlerMeta', 'route_method', 'plugin_method',
 
 
 from bottle_neck import __version__
+import bottle
 import functools
 import inspect
 import six
@@ -236,7 +237,8 @@ class BaseHandler(object):
         plugins (dict): A key/value mapping of available plugins.
         global_plugins (dict): A key/value mapping default applying plugins.
     """
-
+    request = bottle.request
+    response = bottle.response
     base_endpoint = '/'
     cors_enabled = True
     plugins = dict()

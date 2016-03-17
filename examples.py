@@ -19,7 +19,7 @@ class LogPlugin(BaseHandlerPlugin):
     """
 
     def apply(self, *args, **kwargs):
-        print "Log: (calling a plugin wrapped handler)"
+        print("Log: (calling a plugin wrapped handler)")
         return self._wrapped(*args, **kwargs)
 
 
@@ -41,7 +41,8 @@ class ModelHandler(BaseHandler):
 
     @plugin_method('key_plugin')
     def get(self, pk):
-        return {"model": pk}
+        print(self.request.content_length)
+        return {"model": pk, "request_length": self.request.content_length}
 
     def post(self):
         return {"created": 201}
@@ -82,7 +83,6 @@ if __name__ == '__main__':
     bottle.run(
         app=app,
         host='0.0.0.0',
-        server="cherrypy",
         port=8183,
         reloader=True
     )

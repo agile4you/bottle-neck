@@ -10,7 +10,8 @@ framework.
 
 *Features*:
    - Class-Based views.
-   - CBV -based Plugin system.
+   - CBV - based Plugin system.
    - Predefined Web Response interface.
    - Useful Middle-Ware ("CORS enabled", "ignore trailing slash")
    - Application easy routing for function/CBV handlers.
+   - Ready to use hooks.
