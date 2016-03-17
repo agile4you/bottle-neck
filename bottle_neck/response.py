@@ -65,7 +65,7 @@ class WSResponse(object):
 
     Attributes:
         status_code (int): Response HTTP status code.
-        data (dict): Response key/value data.
+        data (object): Response key/value data.
         errors (dict): Response key/value errors.
 
     Examples:
