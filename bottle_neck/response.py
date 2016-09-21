@@ -82,7 +82,7 @@ class WSResponse(object):
 
     def __init__(self, status_code=200, data=None, errors=None):
         if status_code not in dict(HTTP_CODES) or\
-                not isinstance(errors, (list, type(None), six.string_types)):
+                not isinstance(errors, six.string_types + (list, tuple, type(None),)):
             raise WSResponseError('Invalid Response initialization.')
         self.status_code = status_code
         self.data = data
@@ -263,7 +263,7 @@ class WSResponse(object):
 
         web_resp['status_code'] = self.status_code
         web_resp['status_text'] = dict(HTTP_CODES).get(self.status_code)
-        web_resp['data'] = self.data or {}
+        web_resp['data'] = self.data
         web_resp['errors'] = self.errors or []
 
         return web_resp
