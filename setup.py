@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='bottle-neck',
-    version='1.13c',
+    version='1.14',
     packages=['bottle_neck'],
     url='https://github.com/agile4you/bottle-neck.git',
     license='GLPv3',
