@@ -12,9 +12,9 @@ framework-agnostic.
     additional renderer classes (SOAP, XML, YAML).
 """
 
-from __future__ import absolute_import
 
 from bottle_neck import __version__
+import bottle
 import collections
 import six
 
@@ -79,6 +79,9 @@ class WSResponse(object):
 
     """
     __slots__ = ['status_code', 'data', 'errors']
+
+    expose_status = False
+    response = bottle.response
 
     def __init__(self, status_code=200, data=None, errors=None):
         if status_code not in dict(HTTP_CODES) or\
@@ -153,6 +156,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '201 Created'
+
         return cls(201, data=data).to_json
 
     @classmethod
@@ -165,11 +172,15 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '304 Not Modified'
+
         return cls(304, None, errors).to_json
 
     @classmethod
     def bad_request(cls, errors=None):
-        """Shortcut API for HTTP 400 `Bad request` response.
+        """Shortcut API for HTTP 400 `Bad Request` response.
 
         Args:
             errors (list): Response key/value data.
@@ -177,6 +188,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '400 Bad Request'
+
         return cls(400, errors=errors).to_json
 
     @classmethod
@@ -189,6 +204,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '401 Unauthorized'
+
         return cls(401, errors=errors).to_json
 
     @classmethod
@@ -201,6 +220,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '403 Forbidden'
+
         return cls(403, errors=errors).to_json
 
     @classmethod
@@ -213,6 +236,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '404 Not Found'
+
         return cls(404, None, errors).to_json
 
     @classmethod
@@ -225,6 +252,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '405 Method Not Allowed'
+
         return cls(405, None, errors).to_json
 
     @classmethod
@@ -237,6 +268,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '501 Not Implemented'
+
         return cls(501, None, errors).to_json
 
     @classmethod
@@ -249,6 +284,10 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
+        if cls.expose_status:
+            cls.response.content_type = 'application/json'
+            cls.response._status_line = '503 Service Unavailable'
+
         return cls(503, None, errors).to_json
 
     @property
