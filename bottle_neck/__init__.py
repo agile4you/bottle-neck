@@ -25,11 +25,11 @@ from __future__ import absolute_import
 
 __author__ = 'Papavassiliou Vassilis'
 __date__ = '2016-1-26'
-__version__ = '1.13'
+__version__ = '1.15'
 
 __all__ = ['BaseHandler', 'BaseHandlerPlugin', 'route_method', 'plugin_method',
            'HandlerError', 'HandlerPluginError', 'HandlerHTTPMethodError',
-           'WSResponse', 'WSResponseError', 'Router', 'Route',
+           'WSResponse', 'WSRealResponse', 'WSResponseError', 'Router', 'Route',
            'RouteError', 'BasePlugin', 'WrapErrorPlugin', 'BaseMiddleware',
            'StripPathMiddleware', 'cors_enable_hook', 'strip_path_hook',
            'paginator', 'version']
@@ -39,7 +39,7 @@ from bottle_neck.cbv import (
     BaseHandler, BaseHandlerPlugin, route_method, plugin_method, HandlerError,
     HandlerPluginError, HandlerHTTPMethodError
 )
-from bottle_neck.response import (WSResponse, WSResponseError)
+from bottle_neck.response import (WSResponse, WSRealResponse, WSResponseError)
 from bottle_neck.routing import (RouteError, Router, Route)
 from bottle_neck.plugins import (BasePlugin, WrapErrorPlugin)
 from bottle_neck.middleware import (BaseMiddleware, StripPathMiddleware)

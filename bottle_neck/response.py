@@ -19,7 +19,7 @@ import collections
 import six
 
 __author__ = 'Papavassiliou Vassilis'
-__all__ = ['WSResponse', 'WSResponseError']
+__all__ = ['WSResponse', 'WSRealResponse', 'WSResponseError']
 
 
 version = tuple(map(int, __version__.split('.')))
@@ -302,10 +302,16 @@ class WSResponse(object):
 
         web_resp['status_code'] = self.status_code
         web_resp['status_text'] = dict(HTTP_CODES).get(self.status_code)
-        web_resp['data'] = self.data
+        web_resp['data'] = self.data if self is not None else {}
         web_resp['errors'] = self.errors or []
 
         return web_resp
+
+
+class WSRealResponse(WSResponse):
+    """A WSResponse subclass that exposes state to HTTP(S semantics.
+    """
+    expose_status = True
 
 
 if __name__ == '__main__':  # pragma: no cover
