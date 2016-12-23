@@ -1,8 +1,9 @@
 from distutils.core import setup
+from bottle_neck import __version__ as version
 
 setup(
     name='bottle-neck',
-    version='1.15',
+    version=version,
     packages=['bottle_neck'],
     url='https://github.com/agile4you/bottle-neck.git',
     license='GLPv3',
