@@ -59,7 +59,7 @@ router = Router()
 
 api = StripPathMiddleware(Bottle())
 
-router.register_handler(ResourceHandler, '/api')
+router.register_handler(ResourceHandler, '/')
 
 router.mount(api)
 
