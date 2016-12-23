@@ -302,7 +302,7 @@ class WSResponse(object):
 
         web_resp['status_code'] = self.status_code
         web_resp['status_text'] = dict(HTTP_CODES).get(self.status_code)
-        web_resp['data'] = self.data if self is not None else {}
+        web_resp['data'] = self.data if self.data is not None else {}
         web_resp['errors'] = self.errors or []
 
         return web_resp
