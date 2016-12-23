@@ -19,7 +19,7 @@ import collections
 import six
 
 __author__ = 'Papavassiliou Vassilis'
-__all__ = ['WSResponse', 'WSRealResponse', 'WSResponseError']
+__all__ = ['WSResponse', 'WSResponseError']
 
 
 version = tuple(map(int, __version__.split('.')))
@@ -80,7 +80,7 @@ class WSResponse(object):
     """
     __slots__ = ['status_code', 'data', 'errors']
 
-    expose_status = False
+    expose_status = True
     response = bottle.response
 
     def __init__(self, status_code=200, data=None, errors=None):
@@ -88,7 +88,7 @@ class WSResponse(object):
                 not isinstance(errors, six.string_types + (list, tuple, type(None),)):
             raise WSResponseError('Invalid Response initialization.')
         self.status_code = status_code
-        self.data = data
+        self.data = data or {}
 
         if isinstance(errors, (six.string_types, )):
             errors = [errors]
@@ -136,7 +136,7 @@ class WSResponse(object):
         """Shortcut API for HTTP 200 `OK` response.
 
         Args:
-            data (dict): Response key/value data.
+            data (object): Response key/value data.
 
         Returns
             WSResponse Instance.
@@ -151,12 +151,12 @@ class WSResponse(object):
         """Shortcut API for HTTP 201 `Created` response.
 
         Args:
-            data (dict): Response key/value data.
+            data (object): Response key/value data.
 
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '201 Created'
 
@@ -172,7 +172,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '304 Not Modified'
 
@@ -188,7 +188,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '400 Bad Request'
 
@@ -204,7 +204,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '401 Unauthorized'
 
@@ -220,7 +220,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '403 Forbidden'
 
@@ -236,7 +236,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '404 Not Found'
 
@@ -252,7 +252,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '405 Method Not Allowed'
 
@@ -268,7 +268,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '501 Not Implemented'
 
@@ -284,7 +284,7 @@ class WSResponse(object):
         Returns:
             WSResponse Instance.
         """
-        if cls.expose_status:
+        if cls.expose_status:  # pragma: no cover
             cls.response.content_type = 'application/json'
             cls.response._status_line = '503 Service Unavailable'
 
@@ -306,12 +306,6 @@ class WSResponse(object):
         web_resp['errors'] = self.errors or []
 
         return web_resp
-
-
-class WSRealResponse(WSResponse):
-    """A WSResponse subclass that exposes state to HTTP(S semantics.
-    """
-    expose_status = True
 
 
 if __name__ == '__main__':  # pragma: no cover
