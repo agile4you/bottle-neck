@@ -339,9 +339,7 @@ class BaseHandler(object):
 
         prefix = '/{}'.format(url_extra_part) if url_extra_part else ''
 
-        prefix += '/:' if method_args else ''
-
-        endpoint = cls.base_endpoint + prefix
+        endpoint = cls.base_endpoint
 
         if not method_args:
             return [endpoint]
@@ -349,7 +347,8 @@ class BaseHandler(object):
         endpoints = []
 
         for args_list in cls._router_helper(method_args):
-            endpoints.append((endpoint + '/:'.join(args_list)).replace("//", '/'))
+            prefix = '/:' if args_list else ''
+            endpoints.append((endpoint + prefix + '/:'.join(args_list)).replace("//", '/'))
 
         return endpoints
 
