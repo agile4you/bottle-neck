@@ -285,8 +285,10 @@ class BaseHandler(object):
         router = getattr(application, "route")
 
         for func_name, func_callable in routes:
-            method_args = inspect.getargspec(func_callable)[0]
-            method_args.remove('self')
+            # method_args = inspect.getargspec(func_callable)[0]
+            # method_args.remove('self')
+
+            method_args = inspect.signature(func_callable).parameters
 
             if hasattr(func_callable, 'http_method'):
                 http_method = func_callable.http_method
@@ -309,10 +311,8 @@ class BaseHandler(object):
                     func_callable
                 )
 
-            router(
-                cls._build_routes(method_args, url_extra_part),
-                method=[http_method.upper()]
-            )(func_callable)
+            for entrypoint in cls._build_routes(method_args, url_extra_part):
+                router(entrypoint, method=[http_method.upper()])(func_callable)
 
         if cls.cors_enabled:
             cls_desc = cls.__doc__ or ''
@@ -341,9 +341,34 @@ class BaseHandler(object):
 
         prefix += '/:' if method_args else ''
 
-        endpoint = cls.base_endpoint + prefix + '/:'.join(method_args)
+        endpoint = cls.base_endpoint + prefix
 
-        return endpoint.replace("//", '/')
+        if not method_args:
+            return [endpoint]
+
+        endpoints = []
+
+        for args_list in cls._router_helper(method_args):
+            endpoints.append((endpoint + '/:'.join(args_list)).replace("//", '/'))
+
+        return endpoints
+
+    @classmethod
+    def _router_helper(cls, method_args):
+        """Detect default Nullable method arguments and return
+        multiple routes per callable.
+        """
+
+        fixed_params = [param for param in method_args
+                        if method_args[param].default is not None]
+
+        nullable_params = [param for param in method_args if param not in fixed_params]
+
+        combinations = [fixed_params]
+
+        combinations += [combinations[-1] + [param] for param in nullable_params]
+
+        return combinations
 
     @classmethod
     def _get_http_members(cls):
