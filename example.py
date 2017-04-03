@@ -20,7 +20,8 @@ resource_db = [
 class ResourceHandler(BaseHandler):
     """API Handler for Data Resource.
     """
-    base_endpoint = '/'
+
+    response_factory = WSResponse
     cors_enabled = True
 
     def get(self, uid=None):
@@ -29,7 +30,7 @@ class ResourceHandler(BaseHandler):
         # Return resource collection
 
         if uid is None:
-            return WSResponse.ok(data=resource_db)
+            return self.response_factory.ok(data=resource_db)
 
         # Return resource based on UID.
 
@@ -37,9 +38,9 @@ class ResourceHandler(BaseHandler):
             record = [r for r in resource_db if r.get('id') == uid].pop()
 
         except IndexError:
-            return WSResponse.not_found(errors=['Resource with UID {} does not exist.'.format(uid)])
+            return self.response_factory.not_found(errors=['Resource with UID {} does not exist.'.format(uid)])
 
-        return WSResponse.ok(data=record)
+        return self.response_factory.ok(data=record)
 
     def post(self):
         """Example POST method.
@@ -47,12 +48,41 @@ class ResourceHandler(BaseHandler):
 
         resource_data = self.request.json
 
-        record = {'id': len(resource_db) + 1,
+        record = {'id': str(len(resource_db) + 1),
                   'name': resource_data.get('name')}
 
         resource_db.append(record)
 
-        return WSResponse.ok(data=record)
+        return self.response_factory.ok(data=record)
+
+    def put(self, uid):
+        """Example PUT method.
+        """
+
+        resource_data = self.request.json
+
+        try:
+            record = resource_db[uid]
+
+        except KeyError:
+            return self.response_factory.not_found(errors=['Resource with UID {} does not exist!'])
+
+        record['name'] = resource_data.get('name')
+
+        return self.response_factory.ok(data=record)
+
+    def delete(self, uid):
+        """Example DELETE method.
+        """
+        try:
+            record = resource_db[uid].copy()
+
+        except KeyError:
+            return self.response_factory.not_found(errors=['Resource with UID {} does not exist!'])
+
+        del resource_db[uid]
+
+        return self.response_factory.ok(data=record)
 
 
 router = Router()
@@ -62,9 +92,6 @@ api = StripPathMiddleware(Bottle())
 router.register_handler(ResourceHandler, '/')
 
 router.mount(api)
-
-for i in api.routes:
-    print(i)
 
 if __name__ == '__main__':
 

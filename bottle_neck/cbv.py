@@ -231,14 +231,23 @@ class BaseHandler(object):
     Subclass `BaseHandler` in order to its API for application routing, and
     implement any of the known http method:
 
-    Class attributes:
+    Class Attributes:
+        render (object): bottle.jinja2_render.
+        request (object): bottle.request
+        response (object): bottle.response
+        redirect (object):bottle.redirect
+        abort (object): bottle.abort
         base_endpoint (str): The handler endpoint prefix.
         cors_enabled (bool): Indicates if CORS is enabled.
         plugins (dict): A key/value mapping of available plugins.
         global_plugins (dict): A key/value mapping default applying plugins.
     """
+    render = bottle.jinja2_template
     request = bottle.request
     response = bottle.response
+    redirect = bottle.redirect
+    abort = bottle.abort
+    response_factory = None
     base_endpoint = '/'
     cors_enabled = True
     plugins = dict()
@@ -285,8 +294,6 @@ class BaseHandler(object):
         router = getattr(application, "route")
 
         for func_name, func_callable in routes:
-            # method_args = inspect.getargspec(func_callable)[0]
-            # method_args.remove('self')
 
             method_args = inspect.signature(func_callable).parameters
 
@@ -339,7 +346,7 @@ class BaseHandler(object):
 
         prefix = '/{}'.format(url_extra_part) if url_extra_part else ''
 
-        endpoint = cls.base_endpoint
+        endpoint = cls.base_endpoint + prefix
 
         if not method_args:
             return [endpoint]
