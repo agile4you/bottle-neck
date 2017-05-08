@@ -1,5 +1,15 @@
 from distutils.core import setup
-from bottle_neck import __version__ as version
+import re
+import ast
+
+
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+
+with open('bottle_neck/__init__.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')
+    ).group(1)))
+
 
 setup(
     name='bottle-neck',
@@ -10,7 +20,5 @@ setup(
     author='Papavassiliou Vassilis',
     author_email='vpapavasil@gmail.com',
     description='Web services with bottle.py made easy!',
-    extras_require={
-        'test': ['pytest', 'bottle', 'six'],
-    }
+    install_requires=['bottle']
 )

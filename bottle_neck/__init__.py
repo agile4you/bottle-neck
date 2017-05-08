@@ -25,7 +25,7 @@ from __future__ import absolute_import
 
 __author__ = 'Papavassiliou Vassilis'
 __date__ = '2016-1-26'
-__version__ = '1.21'
+__version__ = '1.23'
 
 __all__ = ['BaseHandler', 'BaseHandlerPlugin', 'route_method', 'plugin_method',
            'HandlerError', 'HandlerPluginError', 'HandlerHTTPMethodError',
