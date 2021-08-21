@@ -45,6 +45,8 @@ def test_router_register_handler_fn_pass(mock_router):
 
     assert len(mock_router) == 1
 
+    mock_router.__init__()
+
 
 def test_router_register_handler_fail(mock_router):
     """Test `bottle_neck.routing.Router.register_handler` error handling.
